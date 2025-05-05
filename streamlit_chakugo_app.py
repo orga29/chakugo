@@ -78,9 +78,11 @@ if uploaded:
     wb.save(output)
     output.seek(0)
 
-    st.download_button(
-        label="抽出結果をダウンロード",
-        data=output,
-        file_name=f"{datetime.today().strftime('%m%d')}着後必要数.xlsx",
-        mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-    )
+# 日本時間でファイル名を生成
+dt_jst = datetime.now(timezone(timedelta(hours=9)))
+st.download_button(
+    label="抽出結果をダウンロード",
+    data=output,
+    file_name=f"{dt_jst.strftime('%m%d')}着後必要数.xlsx",
+    mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+)
