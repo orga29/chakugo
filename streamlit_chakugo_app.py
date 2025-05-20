@@ -3,7 +3,7 @@ import pandas as pd
 from io import BytesIO
 from openpyxl import Workbook
 from openpyxl.styles import Border, Side, Alignment, PatternFill, Font
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone # timedelta が使われていることを確認
 
 # --- Excel 抽出・書式設定関数 ---
 def process_workbook(df):
@@ -63,8 +63,9 @@ def process_workbook(df):
     # フッター追加
     footer_row = tot_rows + 2
     footer_cell = ws.cell(row=footer_row, column=2)
-    dt_jst = datetime.now(timezone(timedelta(hours=9)))
-    footer_cell.value = f"{dt_jst.strftime('%m/%d')} 着後必要数"
+    # --- 変更点 1: フッターの日付を翌日に変更 ---
+    dt_jst_next_day_footer = datetime.now(timezone(timedelta(hours=9))) + timedelta(days=1)
+    footer_cell.value = f"{dt_jst_next_day_footer.strftime('%m/%d')} 着後必要数"
     footer_cell.font = Font(size=12)
     footer_cell.alignment = Alignment(horizontal='center', vertical='center')
 
@@ -88,10 +89,11 @@ if uploaded:
     output.seek(0)
 
     # ダウンロードボタン
-    dt_jst = datetime.now(timezone(timedelta(hours=9)))
+    # --- 変更点 2: ファイル名の日付を翌日に変更 ---
+    dt_jst_next_day_filename = datetime.now(timezone(timedelta(hours=9))) + timedelta(days=1)
     st.download_button(
         label="抽出結果をダウンロード",
         data=output,
-        file_name=f"{dt_jst.strftime('%m%d')}着後必要数.xlsx",
+        file_name=f"{dt_jst_next_day_filename.strftime('%m%d')}着後必要数.xlsx",
         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
